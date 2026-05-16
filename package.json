@@ -1,0 +1,36 @@
+{
+  "name": "email-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.26.0",
+    "next": "14.2.35",
+    "nodemailer": "^9.0.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "recharts": "^3.10.0",
+    "tailwind-merge": "^3.6.0",
+    "ua-parser-js": "^2.0.10"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/nodemailer": "^8.0.1",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/ua-parser-js": "^0.7.39",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tracker {
+  id          String      @id @default(uuid())
+  title       String
+  subject     String?
+  bodySnippet String?
+  category    String      @default("General")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  recipients  Recipient[]
+}
+
+model Recipient {
+  id           String     @id @default(uuid())
+  trackerId    String
+  tracker      Tracker    @relation(fields: [trackerId], references: [id], onDelete: Cascade)
+  email        String
+  name         String?
+  token        String     @unique @default(uuid())
+  openCount    Int        @default(0)
+  clickCount   Int        @default(0)
+  firstOpened  DateTime?
+  lastOpened   DateTime?
+  firstClicked DateTime?
+  lastClicked  DateTime?
+  createdAt    DateTime   @default(now())
+  openLogs     OpenLog[]
+  clickLogs    ClickLog[]
+}
+
+model OpenLog {
+  id          String    @id @default(uuid())
+  recipientId String
+  recipient   Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  ip          String?
+  userAgent   String?
+  browser     String?
+  os          String?
+  device      String?
+  clientType  String?
+  country     String?
+  region      String?
+  city        String?
+  openedAt    DateTime  @default(now())
+}
+
+model ClickLog {
+  id          String    @id @default(uuid())
+  recipientId String
+  recipient   Recipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  targetUrl   String
+  ip          String?
+  userAgent   String?
+  country     String?
+  city        String?
+  clickedAt   DateTime  @default(now())
+}
+
+model Settings {
+  id        String   @id @default("default")
+  smtpHost  String?
+  smtpPort  Int?
+  smtpUser  String?
+  smtpPass  String?
+  smtpFrom  String?
+  resendKey String?
+  updatedAt DateTime @updatedAt
+}
