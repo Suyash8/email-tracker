@@ -26,3 +26,19 @@
   - Initialized SQLite for local dev environment and prepared PostgreSQL compatibility for Vercel/Neon deployment.
 - **Verification**: Executed `npx prisma db push` and `npx prisma generate` cleanly.
 
+### [2026-07-24T10:09:25+05:30] Feature Branch: feature/tracking-engine
+- **Branch**: `feature/tracking-engine`
+- **Files Created/Modified**:
+  - `src/app/api/track/pixel/route.ts`
+  - `src/app/api/track/link/route.ts`
+  - `src/app/api/trackers/route.ts`
+  - `src/app/api/trackers/[id]/route.ts`
+  - `src/app/api/analytics/route.ts`
+  - `src/app/api/send/route.ts`
+- **Architectural Rationale**:
+  - `/api/track/pixel`: Serves stealth 13-byte 1x1 transparent GIF with anti-cache headers (`Cache-Control: private, no-cache, no-store, max-age=0`). Logs IP, User-Agent, browser, OS, device, and email proxy client detection (Gmail Proxy / Apple Mail Privacy).
+  - `/api/track/link`: Intercepts link clicks, updates recipient engagement stats, and performs HTTP 302 redirect.
+  - `/api/send`: Handles multi-recipient email dispatch with Nodemailer or pre-injected stealth pixels per recipient.
+- **Verification**: `npm run build` completed with zero TypeScript errors.
+
+
