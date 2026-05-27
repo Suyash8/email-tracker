@@ -58,5 +58,13 @@
   - Integrated full step-by-step setup documentation for Vercel deployment with free Neon PostgreSQL.
 - **Verification**: Executed `npm run build` cleanly; all static and server pages generated without lint or type errors.
 
-
-
+### [2026-07-24T10:57:19+05:30] Feature Branch: feature/e2e-verification-and-testing
+- **Branch**: `feature/e2e-verification-and-testing`
+- **Files Created/Modified**:
+  - `scripts/verify-tracking.js`
+  - `scripts/test-http.js`
+- **Empirical Test Proof & Results**:
+  - **Single & Multi-Recipient Token Resolution**: Verified that creating a multi-recipient campaign generates distinct UUID tokens per recipient (`alice@test.com` vs `bob@test.com`).
+  - **First vs Duplicate Opens**: Tested initial open (`firstOpened` set) followed by duplicate open (`openCount` incremented to 2, `lastOpened` updated to latest timestamp, while `firstOpened` remains pinned to initial time).
+  - **HTTP Response Verification**: Sent live HTTP request to `/api/track/pixel?t=TOKEN`. Returned `200 OK` with binary signature matching `GIF89a` (1x1 13-byte transparent GIF) and anti-cache headers (`Cache-Control: private, no-cache, no-store, max-age=0`).
+  - **Telemetry Logging**: Verified logging of IP address, User Agent, device type, client type detection (Gmail Proxy, Apple Mail Privacy), and location info.
