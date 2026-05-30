@@ -68,3 +68,16 @@
   - **First vs Duplicate Opens**: Tested initial open (`firstOpened` set) followed by duplicate open (`openCount` incremented to 2, `lastOpened` updated to latest timestamp, while `firstOpened` remains pinned to initial time).
   - **HTTP Response Verification**: Sent live HTTP request to `/api/track/pixel?t=TOKEN`. Returned `200 OK` with binary signature matching `GIF89a` (1x1 13-byte transparent GIF) and anti-cache headers (`Cache-Control: private, no-cache, no-store, max-age=0`).
   - **Telemetry Logging**: Verified logging of IP address, User Agent, device type, client type detection (Gmail Proxy, Apple Mail Privacy), and location info.
+
+### [2026-07-24T11:06:43+05:30] Feature Branch: feature/gmail-proxy-and-clean-pixel-route
+- **Branch**: `feature/gmail-proxy-and-clean-pixel-route`
+- **Files Created/Modified**:
+  - `src/lib/tracker-handler.ts`
+  - `src/app/api/t/[token]/route.ts`
+  - `src/app/api/track/pixel/route.ts`
+  - `src/app/generator/page.tsx`
+- **Architectural Rationale**:
+  - Implemented clean static image route `/api/t/[token].gif` so email proxies (such as Google Image Proxy `googleusercontent.com`) treat the tracking link as a standard static image asset rather than an API endpoint.
+  - Added Public Base App Domain configuration field in the Generator UI to prevent `http://localhost:3000` URLs from failing when fetched by external cloud proxies (Google's servers on the internet cannot reach `localhost:3000` on a local development laptop).
+- **Verification**: `npm run build` compiled with zero errors; clean `/api/t/[token]` route verified.
+
