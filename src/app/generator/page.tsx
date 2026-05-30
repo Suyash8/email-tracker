@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
 import {
@@ -10,7 +10,9 @@ import {
   Sparkles,
   Users,
   EyeOff,
-  Zap
+  Zap,
+  Globe,
+  AlertTriangle
 } from 'lucide-react';
 
 interface RecipientResult {
@@ -33,11 +35,17 @@ export default function GeneratorPage() {
   const [category] = useState('General');
   const [recipientsInput, setRecipientsInput] = useState('');
   const [targetLink, setTargetLink] = useState('');
+  const [publicDomain, setPublicDomain] = useState('');
   const [loading, setLoading] = useState(false);
   const [createdTracker, setCreatedTracker] = useState<GeneratedTracker | null>(null);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const origin = window.location.origin;
+      setPublicDomain(origin);
+    }
+  }, []);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +95,8 @@ export default function GeneratorPage() {
     setTimeout(() => setCopiedToken(null), 2000);
   };
 
+  const isLocalhost = publicDomain.includes('localhost') || publicDomain.includes('127.0.0.1');
+
   return (
     <div className="flex h-screen bg-[#090d16] text-slate-100 overflow-hidden">
       <Sidebar />
@@ -95,6 +105,24 @@ export default function GeneratorPage() {
         <Header title="Stealth Pixel & Link Generator" />
 
         <main className="p-6 max-w-5xl mx-auto w-full space-y-6">
+          {/* Gmail Proxy Explanation Alert */}
+          {isLocalhost && (
+            <div className="p-4 rounded-2xl bg-amber-950/40 border border-amber-500/30 flex items-start gap-3 backdrop-blur-md">
+              <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-amber-200 space-y-1">
+                <strong className="font-bold text-amber-300 text-sm block">
+                  💡 Important Note on Gmail Image Proxy & Localhost
+                </strong>
+                <p className="leading-relaxed">
+                  Gmail routes all images through Google&apos;s cloud proxy (<code>googleusercontent.com</code>). Google&apos;s servers on the internet <strong>cannot reach localhost:3000</strong> on your personal laptop.
+                </p>
+                <p className="leading-relaxed font-semibold text-white">
+                  To test with real Gmail/Outlook emails, enter your Vercel deployment URL or a free tunnel URL (e.g. <code>https://my-app.vercel.app</code> or <code>https://xxx.ngrok-free.app</code>) in the Public Base Domain field below!
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-md">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
@@ -109,6 +137,26 @@ export default function GeneratorPage() {
             </div>
 
             <form onSubmit={handleGenerate} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
+                  Public Base App Domain / URL (For Gmail Proxy Compatibility)
+                </label>
+                <div className="relative">
+                  <Globe className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="https://your-app.vercel.app or https://xxx.ngrok-free.app"
+                    value={publicDomain}
+                    onChange={(e) => setPublicDomain(e.target.value)}
+                    className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  This base URL will be used to construct image pixel links readable by Gmail, Outlook, and Apple Mail proxies.
+                </span>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 uppercase mb-1">
@@ -154,7 +202,7 @@ carol@acme.com"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 font-mono"
                 ></textarea>
                 <span className="text-[11px] text-slate-400 mt-1 block">
-                  💡 Each recipient gets a unique invisible pixel token. If sending in CC/BCC, use each recipient&apos;s custom snippet in their individual copy or mail merge!
+                  💡 Each recipient gets a unique invisible pixel token.
                 </span>
               </div>
 
@@ -216,10 +264,12 @@ carol@acme.com"
 
                 <div className="space-y-4">
                   {createdTracker.recipients.map((rec) => {
-                    const pixelUrl = `${baseUrl}/api/track/pixel?t=${rec.token}`;
+                    const cleanDomain = publicDomain.replace(/\/$/, '');
+                    // Gmail Proxy friendly static image URL
+                    const pixelUrl = `${cleanDomain}/api/t/${rec.token}.gif`;
                     const pixelHtml = `<img src="${pixelUrl}" width="1" height="1" border="0" style="display:none !important; width:1px; height:1px; border:0; outline:none; text-decoration:none;" alt="" />`;
                     const clickUrl = targetLink
-                      ? `${baseUrl}/api/track/link?t=${rec.token}&url=${encodeURIComponent(targetLink)}`
+                      ? `${cleanDomain}/api/track/link?t=${rec.token}&url=${encodeURIComponent(targetLink)}`
                       : null;
 
                     return (
@@ -233,7 +283,7 @@ carol@acme.com"
                         <div>
                           <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
                             <span className="flex items-center gap-1">
-                              <EyeOff className="w-3.5 h-3.5 text-cyan-400" /> Invisible HTML Pixel Component (0px Size)
+                              <EyeOff className="w-3.5 h-3.5 text-cyan-400" /> Invisible Gmail-Compatible HTML Pixel Component
                             </span>
                             <button
                               onClick={() => copyToClipboard(pixelHtml, `pixel-${rec.id}`)}
