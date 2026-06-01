@@ -10,11 +10,11 @@ export const TRANSPARENT_GIF_BUFFER = Buffer.from(
 
 export async function processPixelRequest(request: NextRequest, rawToken: string | null) {
   if (rawToken) {
-    // Clean token by stripping optional .gif / .png extensions
-    const token = rawToken.replace(/\.(gif|png|jpg|jpeg)$/i, '').trim();
+    // Clean token by stripping optional .gif / .png / .jpg extensions and query strings
+    const token = rawToken.split('?')[0].replace(/\.(gif|png|jpg|jpeg)$/i, '').trim();
 
     try {
-      // Find recipient by unique tracking token
+      // Find recipient by unique tracking token in current database
       const recipient = await db.recipient.findUnique({
         where: { token },
         include: { tracker: true },
@@ -85,22 +85,27 @@ export async function processPixelRequest(request: NextRequest, rawToken: string
             },
           }),
         ]);
+
+        console.log(`[Pixel Engine] ✅ Tracked open for ${recipient.email} (Token: ${token}) - Count: ${recipient.openCount + 1}`);
+      } else {
+        console.warn(`[Pixel Engine] ⚠️ Token "${token}" not found in current database. (Likely created before database migration).`);
       }
     } catch (error) {
-      console.error('Error logging email open:', error);
+      console.error('[Pixel Engine] Error logging email open:', error);
     }
   }
 
-  // Return 1x1 transparent GIF with strict anti-caching & anti-privacy headers tailored for Gmail proxy
+  // Return 1x1 transparent GIF with strict anti-caching & anti-privacy headers
   return new NextResponse(TRANSPARENT_GIF_BUFFER, {
     status: 200,
     headers: {
       'Content-Type': 'image/gif',
       'Content-Length': TRANSPARENT_GIF_BUFFER.length.toString(),
-      'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0, private',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, post-check=0, pre-check=0, private',
       'Pragma': 'no-cache',
       'Expires': '0',
       'Surrogate-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
       'Access-Control-Allow-Origin': '*',
     },
   });
