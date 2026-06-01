@@ -81,3 +81,17 @@
   - Added Public Base App Domain configuration field in the Generator UI to prevent `http://localhost:3000` URLs from failing when fetched by external cloud proxies (Google's servers on the internet cannot reach `localhost:3000` on a local development laptop).
 - **Verification**: `npm run build` compiled with zero errors; clean `/api/t/[token]` route verified.
 
+### [2026-07-24T11:49:27+05:30] Feature Branch: feature/neon-db-and-custom-domain-setup
+- **Branch**: `feature/neon-db-and-custom-domain-setup`
+- **Files Created/Modified**:
+  - `.env`
+  - `.env.example`
+  - `prisma/schema.prisma`
+  - `package.json`
+- **Architectural Rationale**:
+  - Configured project with user's live Neon PostgreSQL database instance (`ep-flat-bread-az0umonm.c-3.ap-southeast-1.aws.neon.tech`).
+  - Set custom production app domain to `https://email.bysuyash.xyz`.
+  - Configured `package.json` build script to `prisma db push && next build` so Vercel automatically syncs database tables on every git push or deployment.
+- **Verification**: Executed `npx prisma db push` successfully against Neon PostgreSQL in 4.62 seconds. Production `npm run build` passed with zero errors.
+
+
