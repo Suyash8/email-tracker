@@ -94,4 +94,15 @@
   - Configured `package.json` build script to `prisma db push && next build` so Vercel automatically syncs database tables on every git push or deployment.
 - **Verification**: Executed `npx prisma db push` successfully against Neon PostgreSQL in 4.62 seconds. Production `npm run build` passed with zero errors.
 
+### [2026-07-24T12:27:10+05:30] Feature Branch: feature/enterprise-stealth-pixel-formatting
+- **Branch**: `feature/enterprise-stealth-pixel-formatting`
+- **Files Created/Modified**:
+  - `src/app/generator/page.tsx`
+  - `src/app/api/send/route.ts`
+- **Architectural Rationale**:
+  - Updated tracking HTML image snippet to standard enterprise formatting (`<img src="..." alt="" width="1" height="1" border="0" style="border:0; outline:none; text-decoration:none; vertical-align:middle;" />`).
+  - Removed `display:none !important;` style which Gmail's HTML pre-processor strips or flags to suppress image execution.
+- **Verification**: Tested against live Neon PostgreSQL database and confirmed successful receipt of `GoogleImageProxy` telemetry. `npm run build` completed with zero errors.
+
+
 

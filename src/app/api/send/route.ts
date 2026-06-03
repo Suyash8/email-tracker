@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     for (const recipient of tracker.recipients) {
       // Recipient-specific stealth pixel HTML
-      const trackingPixelHtml = `<img src="${appUrl}/api/track/pixel?t=${recipient.token}" width="1" height="1" border="0" style="display:none !important; width:1px; height:1px; border:0; outline:none; text-decoration:none;" alt="" />`;
+      const trackingPixelHtml = `<img src="${appUrl}/api/t/${recipient.token}.gif" alt="" width="1" height="1" border="0" style="border:0; outline:none; text-decoration:none; vertical-align:middle;" />`;
 
       // Inject pixel before </body> or at the end of HTML
       let finalHtml = htmlContent;
