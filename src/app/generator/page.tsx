@@ -267,7 +267,7 @@ carol@acme.com"
                     const cleanDomain = publicDomain.replace(/\/$/, '');
                     // Gmail Proxy friendly static image URL
                     const pixelUrl = `${cleanDomain}/api/t/${rec.token}.gif`;
-                    const pixelHtml = `<img src="${pixelUrl}" width="1" height="1" border="0" style="display:none !important; width:1px; height:1px; border:0; outline:none; text-decoration:none;" alt="" />`;
+                    const pixelHtml = `<img src="${pixelUrl}" alt="" width="1" height="1" border="0" style="border:0; outline:none; text-decoration:none; vertical-align:middle;" />`;
                     const clickUrl = targetLink
                       ? `${cleanDomain}/api/track/link?t=${rec.token}&url=${encodeURIComponent(targetLink)}`
                       : null;
