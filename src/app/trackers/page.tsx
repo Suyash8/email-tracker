@@ -66,6 +66,8 @@ export default function TrackersPage() {
 
   useEffect(() => {
     fetchTrackers();
+    const interval = setInterval(fetchTrackers, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleDelete = async (id: string) => {

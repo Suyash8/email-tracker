@@ -104,5 +104,15 @@
   - Removed `display:none !important;` style which Gmail's HTML pre-processor strips or flags to suppress image execution.
 - **Verification**: Tested against live Neon PostgreSQL database and confirmed successful receipt of `GoogleImageProxy` telemetry. `npm run build` completed with zero errors.
 
+### [2026-07-24T12:48:18+05:30] Feature Branch: feature/realtime-ui-polling-and-auto-refresh
+- **Branch**: `feature/realtime-ui-polling-and-auto-refresh`
+- **Files Created/Modified**:
+  - `src/app/page.tsx`
+  - `src/app/trackers/page.tsx`
+- **Architectural Rationale**:
+  - Accelerated real-time polling interval to 5 seconds across Dashboard and Campaign views to immediately surface incoming Google Image Proxy open events.
+- **Verification**: Tested live Google Image Proxy URL for token `5d6e4968-8c72-47a9-b9e5-6af3fff6dd67`. Google Proxy IP `74.125.209.167` hit `https://email.bysuyash.xyz/api/t/5d6e4968-8c72-47a9-b9e5-6af3fff6dd67.gif` and logged `openCount: 1` with `clientType: "Gmail Image Proxy"` in Neon PostgreSQL.
+
+
 
 
