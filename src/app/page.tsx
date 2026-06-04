@@ -83,7 +83,7 @@ export default function Dashboard() {
   useEffect(() => {
     fetchAnalytics();
     // Poll every 10 seconds for real-time tracking updates
-    const interval = setInterval(fetchAnalytics, 10000);
+    const interval = setInterval(fetchAnalytics, 5000);
     return () => clearInterval(interval);
   }, []);
 
